@@ -1,8 +1,9 @@
-import { userModel } from "../models/user.model.js";
-import { createHash, isValidPassword } from ".././utils.js";
+import { userModel } from "../models/user.models.js";
+import { createHash, isValidPassword } from "../../utils.js";
+import UserDTO from "./dto/user.dto.js";
 
 class UserManager {
-    async addUser({ first_name, last_name, email, age, password, role }) {
+    async addUser({ first_name, last_name, email, age, password, role, cart }) {
         try {
             const existingUser = await userModel.findOne({ email });
 
@@ -18,7 +19,8 @@ class UserManager {
                 email,
                 age,
                 password: hashedPassword,
-                role
+                role,
+                cart
             });
 
             console.log("User added!", user);
@@ -40,7 +42,7 @@ class UserManager {
             }
             return null;
         } catch (error) {
-            console.error("Error durante el login:", error);
+            console.error("Error durante el inicio de sesión:", error);
             throw error;
         }
     }
@@ -64,6 +66,8 @@ class UserManager {
             return false;
         }
     }
+
+
 }
 
 export default UserManager;
