@@ -15,6 +15,13 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import ChatManager from './dao/ChatManager.js';
 import cookieParser from 'cookie-parser';
+import cors from "cors";
+import DBManager from "./mongo/ds.js"
+import { ENV_CONFIG } from './config/config.js';
+import emailRouter from "./router/email.routes.js"
+import smsRouter from "./mocking/mock.router.js"
+import { addLogger } from './config/logger.js';
+import loggerRouter from "./router/logger.routes.js"
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -35,8 +42,13 @@ app.engine("handlebars", expressHandlebars.engine({
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname));
-
 app.use(express.static(__dirname + "/public"));
+app.use(
+    cors({
+        credentials: true,
+        
+    })
+)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
