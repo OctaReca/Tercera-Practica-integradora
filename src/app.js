@@ -22,6 +22,7 @@ import emailRouter from "./router/email.routes.js"
 import smsRouter from "./mocking/mock.router.js"
 import { addLogger } from './config/logger.js';
 import loggerRouter from "./router/logger.routes.js"
+import mockingRouter from './mocking/mock.router.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -46,19 +47,21 @@ app.use(express.static(__dirname + "/public"));
 app.use(
     cors({
         credentials: true,
-        
+        methods: ["GET", "POST", "PUT", "DELETE"],
     })
-)
+);
+
+app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
         secret: process.env.SECRET_KEY_SESSION,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: { secure: false },
         store: MongoStore.create({
-            mongoUrl: process.env.MONGO_URL,
+            mongoUrl: process.env.MONGO_CNX_STR,
             collectionName: "sessions",
         }),
     })
@@ -73,6 +76,9 @@ app.use("/api/cart/", CartRouter);
 app.use("/", viewsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/", viewsRouter);
+app.use("email", emailRouter);
+app.use("/mockingproducts", mockingRouter);
+app.use("loggerTest", loggerRouter)
 
 mongoose.connect(process.env.MONGO_URL)
 
